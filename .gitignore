@@ -1,0 +1,16 @@
+*.o
+*.exe
+.vscode
+.gitignore
+kattis/movienight.py
+<<<<<<< HEAD
+<<<<<<< HEAD
+kattis/tollroads.py
+=======
+kattis/movienight.cpp
+kattis/tollroads.py
+kattis/dragonmaid.py
+>>>>>>> df4988b (w)
+=======
+kattis/tollroads.py
+>>>>>>> 7ea9804 (first commit)
