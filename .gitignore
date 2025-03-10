@@ -1,10 +1,17 @@
-[^\.]*
+.*
+!*.*
 *.o
 *.obj
-*.out
+*.so
+*.dll
 *.exe
-.vscode
-.gitignore
+*.bin
+*.out
+*.class
+*.jar
+*.pyc
+*.pyo
+*.swp
 kattis/movienight.py
 <<<<<<< HEAD
 <<<<<<< HEAD
