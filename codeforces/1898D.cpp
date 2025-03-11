@@ -18,7 +18,7 @@ typedef vector<ll> vl;
 typedef vector<pi> vpi;
 typedef vector<pl> vpl;
 typedef vector<cd> vcd;
- 
+
 template<class T> using pq = priority_queue<T>;
 template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
  
@@ -32,37 +32,27 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define sz(x) (int)(x).size()
 #define mp make_pair
 #define pb push_back
-#define f first
-#define s second
+#define eb emplace_back
+#define fir first
+#define sec second
 #define lb lower_bound
 #define ub upper_bound
 #define all(x) x.begin(), x.end()
 #define ins insert
 
-int check(ll num, vl xarr){
-    if((xarr.back()|num)!=num)return -1;
-    int n=sz(xarr);
-    int k=0;
-    FOR(i,1,n){
-        if((xarr[i]|num)==num)k++;
-    }
-    return k;
-}
 void solve(){
-    int n,x;cin>>n>>x;
-    vl arr(n);
-    F0R(i,n)cin>>arr[i];
-    vl xarr={0};
-    F0R(i,n)xarr.pb(xarr.back()^arr[i]);
-    int ans=check(x,xarr);
-    F0R(i,30){
-        if(1<<i&x){
-            ll x1=x^(1<<i);
-            x1|=(1<<i)-1;
-            ans=max(ans,check(x1,xarr));
-        }
+    ll n,a;cin>>n;
+    vl arr=vl(n),brr=vl(n);
+    F0R(i,n){cin>>a;arr[i]=a;}
+    F0R(i,n){cin>>a;brr[i]=a;}
+    ll ans=0;
+    ll y=2e9,z=0;
+    F0R(i,n){
+        ans+=abs(arr[i]-brr[i]);
+        y=min(y,max(arr[i],brr[i]));
+        z=max(z,min(arr[i],brr[i]));
     }
-    cout<<ans<<'\n';
+    cout<<ans+2*max((ll)0,z-y)<<'\n';
 }
 int main() {
     ios_base::sync_with_stdio(0);cin.tie(0);
