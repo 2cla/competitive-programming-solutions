@@ -18,8 +18,7 @@ typedef vector<ll> vl;
 typedef vector<pi> vpi;
 typedef vector<pl> vpl;
 typedef vector<cd> vcd;
-
-typedef tuple<int, int, int> ti;
+typedef vector<bool> vb;
  
 template<class T> using pq = priority_queue<T>;
 template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
@@ -35,17 +34,20 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define mp make_pair
 #define pb push_back
 #define eb emplace_back
-#define fir first
-#define sec second
+#define f first
+#define s second
 #define lb lower_bound
 #define ub upper_bound
 #define all(x) x.begin(), x.end()
 #define ins insert
+#define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 
 struct Tree {
-	typedef ti T;
-	static constexpr T unit = {-(1<<30),1<<30,0};
-	T f(T a, T b) { return {max(get<0>(a),get<0>(b)),min(get<1>(a),get<1>(b)),max({get<0>(b)-get<1>(a),get<2>(a),get<2>(b)})}; }
+	typedef int T;
+	static constexpr T unit = 0;
+	T f(T a, T b) {
+        return a+b;
+    }
 	vector<T> s; int n;
 	Tree(int n = 0, T def = unit) : s(2*n, def), n(n) {}
 	void update(int pos, T val) {
@@ -62,32 +64,27 @@ struct Tree {
 	}
 };
 void solve(){
-    int n,q;cin>>n>>q;
-    vi l1=vi(n),l2=vi(n);
-    F0R(i,n){
-        int a;cin>>a;
-        l1[i]=a-i;l2[n-1-i]=a+i;
+    ll n;cin>>n;
+    string st;cin>>st;
+    vector<Tree> ss(4,Tree(5*n+5));
+    ss[0].update(n,1);
+    vi pre(n+1);
+    FOR(i,1,n+1){
+        pre[i]=pre[i-1]+(st[i-1]=='1');
     }
-    Tree t1(n);Tree t2(n);
-    F0R(i,n){
-        t1.update(i,{l1[i],l1[i],0});
+    ll ans=0;
+    FOR(i,1,n+1){
+        ans+=1ll*ss[i&3].query(4*pre[i]-i+4+n,5*n+5);
+        ans+=1ll*ss[(i+3)&3].query(4*pre[i]-i+5+n,5*n+5);
+        ans+=1ll*ss[(i+2)&3].query(4*pre[i]-i+2+n,5*n+5);
+        ans+=1ll*ss[(i+1)&3].query(4*pre[i]-i-1+n,5*n+5);
+        int tmp=ss[i&3].query(4*pre[i]-i+n,4*pre[i]-i+1+n);
+        ss[i&3].update(4*pre[i]-i+n,tmp+1);
     }
-    F0R(i,n)t2.update(i,{l2[i],l2[i],0});
-    int ans=0;
-    ans=max(get<2>(t1.query(0,n)),get<2>(t2.query(0,n)));
     cout<<ans<<'\n';
-    F0R(_,q){
-        int p,x;cin>>p>>x;
-        t1.update(p-1,{x-p+1,x-p+1,0});
-        t2.update(n-p,{x+p-1,x+p-1,0});
-        ans=max(get<2>(t1.query(0,n)),get<2>(t2.query(0,n)));
-        cout<<ans<<'\n';
-    }
 }
-int main() {
+int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);
-    int t;
-    cin>>t;
-    while(t--)solve();
+    solve();
     return 0;
 }
