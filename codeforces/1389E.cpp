@@ -43,7 +43,15 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 
 void solve(){
-    
+    ll m,d,w;cin>>m>>d>>w;
+    ll t=min(m,d);
+    ll tt=gcd(d-1,w)%w;
+    if(!tt){
+        cout<<t*(t-1)/2<<'\n';return;
+    }
+    ll g=w/tt;
+    ll aa=t/g;
+    cout<<aa*t-g*aa*(aa+1)/2<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);

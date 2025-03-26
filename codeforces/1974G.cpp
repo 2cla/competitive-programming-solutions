@@ -43,7 +43,25 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 
 void solve(){
-    
+    int m,x;cin>>m>>x;
+    vi carr(m);
+    F0R(i,m)cin>>carr[i];
+    pq<int>hp;
+    int mm=0,ans=0;
+    trav(a,carr){
+        if(a<=mm){
+            hp.push(a);
+            mm-=a;
+        }else{
+            if(!hp.empty()&&hp.top()>a){
+                mm+=hp.top();hp.pop();
+                mm-=a;hp.push(a);
+            }
+        }
+        mm+=x;
+        ans=max(ans,sz(hp));
+    }
+    cout<<ans<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);
