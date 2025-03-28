@@ -19,6 +19,8 @@ typedef vector<pi> vpi;
 typedef vector<pl> vpl;
 typedef vector<cd> vcd;
 typedef vector<bool> vb;
+
+typedef unordered_map<int,int> umi;
  
 template<class T> using pq = priority_queue<T>;
 template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;

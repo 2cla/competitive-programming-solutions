@@ -33,6 +33,7 @@
         "complex": "cpp",
         "ostream": "cpp",
         "type_traits": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "numbers": "cpp"
     }
 }
