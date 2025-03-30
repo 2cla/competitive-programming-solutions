@@ -44,9 +44,44 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define ins insert
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 
-
+vl b1,b2;
+vector<vl>dp;
+vector<vl>g;
+void rec(int u,int p){
+    b1[u]=(p==-1)?0:p;
+    b2[u]=(p==-1)?0:b1[p];
+    if(sz(g[u])==1&&u)return;
+    trav(a,g[u]){
+        if(a==p)continue;
+        rec(a,u);
+    }
+}
+void rec2(int i,int u,int p){
+    if(u){
+        if(i>0)dp[i][u]=2+dp[i-1][b2[u]]-(!p);
+        dp[i][u]=min(dp[i][u],2*sz(g[u])+dp[i][b2[u]]-(!p));
+    }
+    if(sz(g[u])==1&&u)return;
+    trav(a,g[u]){
+        if(a==p)continue;
+        rec2(i,a,u);
+    }
+}
 void solve(){
-    
+    ll n,q;cin>>n>>q;
+    g=vector<vl>(n);
+    F0R(i,n-1){
+        int u,v;cin>>u>>v;u--;v--;
+        g[u].pb(v);g[v].pb(u);
+    }
+    b1=vl(n);b2=vl(n);dp=vector<vl>(n+1,vl(n,1e10));
+    F0R(i,n+1)dp[i][0]=0;
+    rec(0,-1);
+    F0R(i,n+1)rec2(i,0,-1);
+    F0R(i,q){
+        int v,p;cin>>v>>p;v--;
+        cout<<1+dp[p][b1[v]]<<'\n';
+    }
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);
