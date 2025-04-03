@@ -44,52 +44,48 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define ins insert
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 
-
+const ll MOD=998244353;
+ll pow(ll x,ll y,ll m){
+    if(!y)return 1;
+    ll p=pow(x,y/2,m)%m;
+    p=(p*p)%m;
+    if(!(y%2))return p;
+    return (x*p)%m;
+}
+ll nCk(ll n,ll k,vl&facts,vl&invfacts){
+    ll tmp=(facts[n]*invfacts[k])%MOD;
+    return(tmp*invfacts[n-k])%MOD;
+}
 void solve(){
-    ll n,m,k;cin>>n>>m>>k;
-    vpl arr;
-    F0R(i,n){
-        ll d,a;cin>>d>>a;
-        arr.pb({d,a});arr.pb({d+k,0});
+    ll n,m;cin>>n>>m;
+    ll N=2e3+10;
+    vl facts(N);
+    vl invfacts(N);
+    facts[0]=1;invfacts[0]=1;
+    FOR(i,1,N)facts[i]=(facts[i-1]*i)%MOD;
+    invfacts[N-1]=pow(facts[N-1],MOD-2,MOD);
+    FORd(i,1,N-1)invfacts[i]=(invfacts[i+1]*(i+1))%MOD;
+    vl cat(m/2+1,1);
+    F0R(i,m/2){
+        cat[i]=(MOD+nCk(m,m/2+i,facts,invfacts)-nCk(m,m/2+i+1,facts,invfacts))%MOD;
     }
-    sort(all(arr));
-    stack<pl>st;
-    ll t=0,ans=0;
-    F0R(i,2*n){
-        ll tt=arr[i].f,w=0;
-        while(!st.empty()&&t<tt){
-            if(st.top().f+k<=t){
-                st.pop();continue;
-            }
-            if(!w){
-                if(st.top().s>=(tt-t)*m){
-                    st.top().s-=(tt-t)*m;
-                    ans+=tt-t;t=tt;
-                }else{
-                    ll tm=(st.top().s/m);
-                    w=st.top().s%m;
-                    ans+=tm;t+=tm;
-                    st.pop();
-                }
-            }else{
-                if(st.top().s>=m-w){
-                    st.top().s-=m-w;
-                    ans++;t++;w=0;
-                }else{
-                    w+=st.top().s;
-                    st.pop();
-                }
+    vl dp(m/2+1),dp2(m/2+1);dp[0]=1;
+    F0R(i,n-1){
+        F0Rd(j,m/2+1){
+            F0R(k,m/2+1){
+                if(j+k>m/2)continue;
+                dp2[j+k]=(dp2[j+k]+dp[j]*cat[k])%MOD;
             }
         }
-        t=tt;
-        st.push(arr[i]);
+        swap(dp,dp2);fill(all(dp2),0);
+    }
+    ll ans=0;
+    F0R(i,m/2+1){
+        ans=(ans+cat[i]*dp[i])%MOD;
     }
     cout<<ans<<'\n';
-}
+}   
 int main(){
-    ios_base::sync_with_stdio(0);cin.tie(0);
-    int t;
-    cin>>t;
-    while(t--)solve();
+    ios_base::sync_with_stdio(0);cin.tie(0);solve();
     return 0;
 }
