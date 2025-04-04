@@ -86,7 +86,7 @@ void solve(){
     F0R(i,m){
         string c;ll x;cin>>c>>x;
         if(c=="+"){
-            auto it=lb(all(brr),x);
+            auto it=brr.lb(x);
             if(it==brr.end()){
                 ints[x-*prev(it)].insert(*prev(it));
                 fl.insert(x-*prev(it));
@@ -107,8 +107,9 @@ void solve(){
                     st.update(aa-bb,*ints[aa-bb].begin());
                 }
             }
+            brr.insert(x);
         }else if(c=="-"){
-            auto it=lb(all(brr),x);
+            auto it=brr.lb(x);
             if(next(it)==brr.end()){
                 ints[x-*prev(it)].erase(*prev(it));
                 if(ints[x-*prev(it)].empty()){
@@ -137,16 +138,18 @@ void solve(){
                 fl.insert(aa-bb);
                 st.update(aa-bb,*ints[aa-bb].begin());
             }
+            brr.erase(x);
         }else{
             ll tt=st.query(x+1,N);
             if(tt>1e8){
-                if(brr.empty())cout<<"1\n";
-                else cout<<1+*prev(brr.end())<<'\n';
+                if(brr.empty())cout<<"1 ";
+                else cout<<1+*prev(brr.end())<<' ';
             }else{
-                cout<<1+tt<<'\n';
+                cout<<1+tt<<' ';
             }
         }
     }
+    cout<<'\n';
     trav(a,fl){
         ints[a].clear();
         st.update(a,1e9);
