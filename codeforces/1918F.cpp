@@ -43,15 +43,36 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define all(x) x.begin(), x.end()
 #define ins insert
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
-#define clz __builtin_clz
 
+vector<vi>g;
+pq<int>cc;
+int rec(int u,int d){
+    if(!sz(g[u]))return 0;
+    pq<int>dd;
+    trav(a,g[u]){
+        dd.push(1+rec(a,d+1));
+    }
+    int mm=dd.top();dd.pop();
+    while(!dd.empty()&&dd.top()>d){
+        cc.push(dd.top()-d);dd.pop();
+    }
+    return mm;
+}
 void solve(){
-    
+    int n,k;cin>>n>>k;
+    g=vector<vi>(n);cc=pq<int>();
+    F0R(i,n-1){
+        int w;cin>>w;w--;
+        g[w].pb(i+1);
+    }
+    int ans=2*(n-1)-rec(0,0);
+    while(!cc.empty()&&k){
+        ans-=cc.top();cc.pop();k--;
+    }
+    cout<<ans<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);
-    int t;
-    cin>>t;
-    while(t--)solve();
+    solve();
     return 0;
 }
