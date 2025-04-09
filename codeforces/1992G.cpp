@@ -45,39 +45,43 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 #define clz __builtin_clz
 
-vector<vi>g;
-int rec(int u){
-    int w=1;
-    trav(a,g[u])w+=rec(a);
-    return w;
+const ll MOD=1e9+7;
+const int N=5e3+5;
+ll facts[N];
+ll invfacts[N];
+ll pow(ll x,ll y,ll m){
+    if(!y)return 1;
+    ll p=pow(x,y/2,m)%m;
+    p=(p*p)%m;
+    if(!(y%2))return p;
+    return (x*p)%m;
+}
+ll nCk(ll n,ll k){
+    ll tmp=(facts[n]*invfacts[k])%MOD;
+    return(tmp*invfacts[n-k])%MOD;
 }
 void solve(){
-    int k;cin>>k;
-    vi ww(k);
-    F0R(i,k){
-        int n;cin>>n;
-        g=vector<vi>(n);
-        F0R(j,n-1){
-            int p;cin>>p;
-            g[--p].pb(j+1);
+    ll n;cin>>n;
+    ll ans=0;
+    F0R(i,(n+1)/2){
+        F0R(j,i+1){
+            ll tmp=(nCk(n-i-j-1,i-j)*nCk(i+j,j))%MOD;
+            tmp=(tmp*(i+j+1))%MOD;
+            ans=(ans+tmp)%MOD;
         }
-        ww[i]=rec(0);
     }
-    sort(all(ww),greater<int>());
-    int ans=ww[0];
-    FOR(j,1,k){
-        F0Rd(i,32){
-            if(ww[j]&1<<i){
-                if(ans&1<<i)ans|=(1<<i)-1;
-                else ans|=1<<i;
-            }
-        }
+    FOR(i,(n+1)/2,n+1){
+        ans=(ans+((2*i+1)*nCk(n,i))%MOD)%MOD;
     }
     cout<<ans<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);
     int t;
+    facts[0]=1;invfacts[0]=1;
+    FOR(i,1,N)facts[i]=(facts[i-1]*i)%MOD;
+    invfacts[N-1]=pow(facts[N-1],MOD-2,MOD);
+    FORd(i,1,N-1)invfacts[i]=(invfacts[i+1]*(i+1))%MOD;
     cin>>t;
     while(t--)solve();
     return 0;

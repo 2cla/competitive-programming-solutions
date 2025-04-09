@@ -45,35 +45,29 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 #define clz __builtin_clz
 
-vector<vi>g;
-int rec(int u){
-    int w=1;
-    trav(a,g[u])w+=rec(a);
-    return w;
-}
+int rec(int mid,vi&arr,int k,int n){
+    vi crr(n),dp(1+n%k+k*(n%k==0));
+    F0R(i,n)crr[i]=(arr[i]>=mid);
+    F0R(i,n){
+        if((i+1)%k>sz(dp)-1)continue;
+        if(!((i+1)%k)){
+            if(i+1>=k&&sz(dp)==k+1)dp[k]=max(dp[k],crr[i]+dp[k-1]);
+        }
+        else dp[(i+1)%k]=max(dp[(i+1)%k],crr[i]+dp[i%k]);
+    }
+    return *max_element(all(dp));
+} 
 void solve(){
-    int k;cin>>k;
-    vi ww(k);
-    F0R(i,k){
-        int n;cin>>n;
-        g=vector<vi>(n);
-        F0R(j,n-1){
-            int p;cin>>p;
-            g[--p].pb(j+1);
-        }
-        ww[i]=rec(0);
+    int n,k;cin>>n>>k;
+    vi arr(n);F0R(i,n)cin>>arr[i];
+    vi brr=arr;sort(all(brr));
+    int lo=0,hi=n-1;
+    while(lo<hi){
+        int mid=(lo+hi+1)/2;
+        if(rec(brr[mid],arr,k,n)>=(n%k+k*(n%k==0))/2+1)lo=mid;
+        else hi=mid-1;
     }
-    sort(all(ww),greater<int>());
-    int ans=ww[0];
-    FOR(j,1,k){
-        F0Rd(i,32){
-            if(ww[j]&1<<i){
-                if(ans&1<<i)ans|=(1<<i)-1;
-                else ans|=1<<i;
-            }
-        }
-    }
-    cout<<ans<<'\n';
+    cout<<brr[lo]<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);
