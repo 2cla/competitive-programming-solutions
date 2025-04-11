@@ -45,44 +45,34 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 #define clz __builtin_clz
 
-vector<vl>g;
-vl arr;
-vl rec(int u,int p){
-    vl tt(sz(g[u])+1);
-    F0R(i,sz(tt))tt[i]=(i+1)*arr[u];
-    ll ww=0;
-    trav(a,g[u]){
-        if(a==p)continue;
-        vl tmp=rec(a,u);
-        pq<pl>hp;
-        F0R(i,sz(tmp)){
-            hp.push({tmp[i],i});
-            if(hp.size()>2)hp.pop();
-        }
-        pl aa=hp.top();hp.pop();
-        if(hp.top().s<sz(tt)){
-            tt[hp.top().s]-=hp.top().f;
-            tt[hp.top().s]+=aa.f;
-        }
-        ww+=hp.top().f;
-    }
-    F0R(i,sz(tt))tt[i]+=ww;
-    return tt;
-}
+const int N=5e5+5;
+vector<vi>facts(N);
 void solve(){
-    ll n;cin>>n;
-    arr=vl(n);F0R(i,n)cin>>arr[i];
-    g=vector<vl>(n);
-    F0R(i,n-1){
-        ll x,y;cin>>x>>y;x--;y--;
-        g[x].pb(y);g[y].pb(x);
+    int n;cin>>n;
+    vi arr(n);F0R(i,n)cin>>arr[i];
+    vector<map<int,int>>mm(n+1);
+    ll ans=0;
+    F0R(i,n){
+        int tmp=gcd(arr[i],i+1);
+        int a=arr[i]/tmp,b=(i+1)/tmp;
+        trav(c,facts[a]){
+            ans+=1ll*mm[b][c];
+        }
+        trav(c,facts[a]){
+            mm[c][b]++;
+        }
     }
-    vl ans=rec(0,-1);
-    cout<<*min_element(all(ans))<<'\n';
+    cout<<ans<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);
     int t;
+    FOR(i,1,N){
+        int j=1;
+        for (int j=i;j<N;j+=i){
+            facts[j].pb(i);
+        }
+    }
     cin>>t;
     while(t--)solve();
     return 0;

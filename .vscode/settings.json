@@ -35,6 +35,8 @@
         "type_traits": "cpp",
         "bitset": "cpp",
         "numbers": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "limits": "cpp",
+        "algorithm": "cpp"
     }
 }

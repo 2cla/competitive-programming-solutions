@@ -1,8 +1,10 @@
 #include "bits/stdc++.h"
+#include <ext/pb_ds/assoc_container.hpp>
 #pragma GCC optimize ("O3")
 #pragma GCC target ("sse4")
  
 using namespace std;
+using namespace __gnu_pbds;
  
 typedef long long ll;
 typedef long double ld;
@@ -21,6 +23,7 @@ typedef vector<cd> vcd;
 typedef vector<bool> vb;
 
 typedef unordered_map<int,int> umi;
+typedef tree<pi, null_type, less<pi>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
  
 template<class T> using pq = priority_queue<T>;
 template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
@@ -45,45 +48,30 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 #define clz __builtin_clz
 
-vector<vl>g;
-vl arr;
-vl rec(int u,int p){
-    vl tt(sz(g[u])+1);
-    F0R(i,sz(tt))tt[i]=(i+1)*arr[u];
-    ll ww=0;
-    trav(a,g[u]){
-        if(a==p)continue;
-        vl tmp=rec(a,u);
-        pq<pl>hp;
-        F0R(i,sz(tmp)){
-            hp.push({tmp[i],i});
-            if(hp.size()>2)hp.pop();
-        }
-        pl aa=hp.top();hp.pop();
-        if(hp.top().s<sz(tt)){
-            tt[hp.top().s]-=hp.top().f;
-            tt[hp.top().s]+=aa.f;
-        }
-        ww+=hp.top().f;
-    }
-    F0R(i,sz(tt))tt[i]+=ww;
-    return tt;
-}
 void solve(){
-    ll n;cin>>n;
-    arr=vl(n);F0R(i,n)cin>>arr[i];
-    g=vector<vl>(n);
-    F0R(i,n-1){
-        ll x,y;cin>>x>>y;x--;y--;
-        g[x].pb(y);g[y].pb(x);
+    int n,q;cin>>n>>q;
+    vi ans(n),arr(n);F0R(i,n)cin>>arr[i];
+    ordered_set ww;
+    vi ctr(n+1);
+    F0R(i,n){
+        int lo=1,hi=sz(ww)+1;
+        while(lo<hi){
+            int mid=(lo+hi)/2;
+            if(1ll*arr[i]*mid>sz(ww))hi=mid;
+            else if(1ll*arr[i]*mid>ww.order_of_key({mid,1e9}))hi=mid;
+            else lo=mid+1;
+        }
+        ans[i]=lo;
+        ww.ins({lo,ctr[lo]});
+        ctr[lo]++;
     }
-    vl ans=rec(0,-1);
-    cout<<*min_element(all(ans))<<'\n';
+    F0R(j,q){
+        int i,x;cin>>i>>x;i--;
+        cout<<(ans[i]<=x?"yes":"no")<<'\n';
+    }
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);
-    int t;
-    cin>>t;
-    while(t--)solve();
+    solve();
     return 0;
 }

@@ -45,40 +45,19 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 #define clz __builtin_clz
 
-vector<vl>g;
-vl arr;
-vl rec(int u,int p){
-    vl tt(sz(g[u])+1);
-    F0R(i,sz(tt))tt[i]=(i+1)*arr[u];
-    ll ww=0;
-    trav(a,g[u]){
-        if(a==p)continue;
-        vl tmp=rec(a,u);
-        pq<pl>hp;
-        F0R(i,sz(tmp)){
-            hp.push({tmp[i],i});
-            if(hp.size()>2)hp.pop();
-        }
-        pl aa=hp.top();hp.pop();
-        if(hp.top().s<sz(tt)){
-            tt[hp.top().s]-=hp.top().f;
-            tt[hp.top().s]+=aa.f;
-        }
-        ww+=hp.top().f;
-    }
-    F0R(i,sz(tt))tt[i]+=ww;
-    return tt;
-}
 void solve(){
-    ll n;cin>>n;
-    arr=vl(n);F0R(i,n)cin>>arr[i];
-    g=vector<vl>(n);
-    F0R(i,n-1){
-        ll x,y;cin>>x>>y;x--;y--;
-        g[x].pb(y);g[y].pb(x);
+    ll n,x;cin>>n>>x;
+    vl arr(n),pre(n);F0R(i,n)cin>>arr[i];
+    if(n<3){
+        cout<<n<<'\n';return;
     }
-    vl ans=rec(0,-1);
-    cout<<*min_element(all(ans))<<'\n';
+    FOR(i,1,n)pre[i]+=pre[i-1];
+    vpl ints,ww;pq<pl>dd;
+    FORd(i,2,n){
+        auto it=lb(all(pre),pre[i-1]-arr[i]);
+        dd.push({i,it-pre.begin()});
+    }
+    
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);

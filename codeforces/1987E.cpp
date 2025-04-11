@@ -44,41 +44,43 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define ins insert
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 #define clz __builtin_clz
-
+ll n,ans;
 vector<vl>g;
 vl arr;
-vl rec(int u,int p){
-    vl tt(sz(g[u])+1);
-    F0R(i,sz(tt))tt[i]=(i+1)*arr[u];
-    ll ww=0;
+vl rec(ll u,ll p){
+    vl tt(n+2);
+    if(sz(g[u])==1&&u){
+        tt[0]=1e14;return tt;
+    }
+    ll tot=0;
     trav(a,g[u]){
         if(a==p)continue;
-        vl tmp=rec(a,u);
-        pq<pl>hp;
-        F0R(i,sz(tmp)){
-            hp.push({tmp[i],i});
-            if(hp.size()>2)hp.pop();
-        }
-        pl aa=hp.top();hp.pop();
-        if(hp.top().s<sz(tt)){
-            tt[hp.top().s]-=hp.top().f;
-            tt[hp.top().s]+=aa.f;
-        }
-        ww+=hp.top().f;
+        tot+=arr[a];
+        vl ww=rec(a,u);
+        F0R(i,n+1)tt[i+1]+=ww[i];
     }
-    F0R(i,sz(tt))tt[i]+=ww;
+    ll ii=1;
+    while(arr[u]>tot){
+        if(arr[u]-tot<=tt[ii]){
+            tt[ii]-=arr[u]-tot;ans+=ii*(arr[u]-tot);tot=arr[u];
+        }else{
+            tot+=tt[ii];ans+=ii*tt[ii];tt[ii]=0;ii++;
+        }
+    }
+    tt[0]+=tot-arr[u];
     return tt;
 }
 void solve(){
-    ll n;cin>>n;
+    cin>>n;
     arr=vl(n);F0R(i,n)cin>>arr[i];
+    ans=0;
     g=vector<vl>(n);
     F0R(i,n-1){
-        ll x,y;cin>>x>>y;x--;y--;
-        g[x].pb(y);g[y].pb(x);
+        ll w;cin>>w;w--;
+        g[w].pb(i+1);g[i+1].pb(w);
     }
-    vl ans=rec(0,-1);
-    cout<<*min_element(all(ans))<<'\n';
+    rec(0,-1);
+    cout<<ans<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);
