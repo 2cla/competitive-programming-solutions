@@ -1,8 +1,10 @@
 #include "bits/stdc++.h"
+#include <ext/pb_ds/assoc_container.hpp>
 #pragma GCC optimize ("O3")
 #pragma GCC target ("sse4")
  
 using namespace std;
+using namespace __gnu_pbds;
  
 typedef long long ll;
 typedef long double ld;
@@ -21,6 +23,8 @@ typedef vector<cd> vcd;
 typedef vector<bool> vb;
 
 typedef unordered_map<int,int> umi;
+typedef unordered_map<ll,ll> uml;
+typedef tree<pi, null_type, less<pi>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
  
 template<class T> using pq = priority_queue<T>;
 template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
@@ -46,10 +50,10 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define clz __builtin_clz
 
 void solve(){
-    
+
 }
 int main(){
-    ios_base::sync_with_stdio(0);cin.tie(0);
+    ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     cin>>t;
     while(t--)solve();

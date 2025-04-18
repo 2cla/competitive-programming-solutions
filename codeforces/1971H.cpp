@@ -45,39 +45,56 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 #define clz __builtin_clz
 
+vector<int> val, comp, z, cont;
+int Time, ncomps;
+template<class G, class F> int dfs(int j, G& g, F& f) {
+	int low = val[j] = ++Time, x; z.push_back(j);
+	for (auto e : g[j]) if (comp[e] < 0)
+		low = min(low, val[e] ?: dfs(e,g,f));
+
+	if (low == val[j]) {
+		do {
+			x = z.back(); z.pop_back();
+			comp[x] = ncomps;
+			cont.push_back(x);
+		} while (x != j);
+		f(cont); cont.clear();
+		ncomps++;
+	}
+	return val[j] = low;
+}
+template<class G, class F> void scc(G& g, F f) {
+	int n = sz(g);
+	val.assign(n, 0); comp.assign(n, -1);
+	Time = ncomps = 0;
+	F0R(i,n) if (comp[i] < 0) dfs(i, g, f);
+}
 void solve(){
-    string ss;cin>>ss;
-    ll n=sz(ss);
-    vector<vl>ww(n+7);ww[0].pb(0);
-    set<ll>idk;
-    ll ans=0,ctr=0;
-    F0R(i,n){
-        if(ss[i]=='(')ctr++;
-        else ctr--;
-        ww[ctr].pb(i+1);
-    }
-    F0Rd(i,n/2+1){
-        trav(a,ww[2*i+1])idk.ins(a);
-        trav(a,ww[2*i+2])idk.ins(a);
-        ll l=0,r=0;
-        while(r<sz(ww[i])){
-            if(l==r){
-                r++;continue;
-            }
-            auto it1=idk.lb(ww[i][l]),it2=idk.lb(ww[i][r]);
-            if(it1==it2)r++;
-            else{
-                ans+=r-l-1;l++;
-            }
-        }
-        while(l<sz(ww[i])){
-            ans+=r-l-1;l++;
+    val.clear();comp.clear();z.clear();cont.clear();Time=0;ncomps=0;
+    int n;cin>>n;
+    vector<set<int>>g(2*n+1);
+    vector<vi>arr(3,vi(n));
+    F0R(i,3){
+        F0R(j,n){
+            cin>>arr[i][j];
         }
     }
-    cout<<ans<<'\n';
+    F0R(i,3){
+        F0R(j,n){
+            F0R(k,3){
+                if(k==i)continue;
+                g[n-arr[i][j]].ins(n+arr[k][j]);
+                if(g[n-arr[i][j]].count(n-arr[k][j]))g[n-arr[i][j]].ins(n+arr[i][j]);
+            }
+        }
+    }
+    scc(g,[](const vi&){});
+    bool fl=1;
+    F0R(i,n)fl&=(comp[i]!=comp[2*n-i]);
+    cout<<(fl?"yes":"no")<<'\n';
 }
 int main(){
-    ios_base::sync_with_stdio(0);cin.tie(0);
+    ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     cin>>t;
     while(t--)solve();

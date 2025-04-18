@@ -19,7 +19,7 @@ typedef vector<pi> vpi;
 typedef vector<pl> vpl;
 typedef vector<cd> vcd;
 typedef vector<bool> vb;
-
+ 
 typedef unordered_map<int,int> umi;
  
 template<class T> using pq = priority_queue<T>;
@@ -43,41 +43,63 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define all(x) x.begin(), x.end()
 #define ins insert
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
-#define clz __builtin_clz
-
+ 
 void solve(){
-    string ss;cin>>ss;
-    ll n=sz(ss);
-    vector<vl>ww(n+7);ww[0].pb(0);
-    set<ll>idk;
-    ll ans=0,ctr=0;
+    int l,m,n;cin>>l>>n>>m;
+    vi brr(n*m+1,-1);
+    set<int>fu;
+    vi arr;
+    F0R(i,l){
+        int tt;cin>>tt;
+        if(!fu.count(tt)){
+            fu.ins(tt);
+            arr.pb(tt);
+            brr[tt]=sz(arr)-1;
+        }
+    }
+    l=sz(arr);
+    vector<vi>dd(l,vi(n,-1));
+    vector<vi>ww(l,vi(n,0));
     F0R(i,n){
-        if(ss[i]=='(')ctr++;
-        else ctr--;
-        ww[ctr].pb(i+1);
-    }
-    F0Rd(i,n/2+1){
-        trav(a,ww[2*i+1])idk.ins(a);
-        trav(a,ww[2*i+2])idk.ins(a);
-        ll l=0,r=0;
-        while(r<sz(ww[i])){
-            if(l==r){
-                r++;continue;
-            }
-            auto it1=idk.lb(ww[i][l]),it2=idk.lb(ww[i][r]);
-            if(it1==it2)r++;
-            else{
-                ans+=r-l-1;l++;
-            }
-        }
-        while(l<sz(ww[i])){
-            ans+=r-l-1;l++;
+        F0R(j,m){
+            int w;cin>>w;
+            if(brr[w]!=-1)dd[brr[w]][i]=j;
         }
     }
-    cout<<ans<<'\n';
+    F0R(i,l){
+        int w=-1;
+        F0Rd(j,n){
+            if(dd[i][j]<=w)dd[i][j]=-1;
+            else w=dd[i][j];
+        }
+    }
+    F0R(i,n){
+        if(dd[l-1][i]!=-1)ww[l-1][i]=1;
+    }
+    F0Rd(i,l-1){
+        int ls=0,w=-1;
+        vi dp(m);
+        if(dd[i][n-1]!=-1){
+            ww[i][n-1]=1;w=dd[i][n-1];
+        }
+        FORd(j,1,n){
+            if(dd[i+1][j]>w&&ww[i+1][j]){
+                ls++;dp[dd[i+1][j]]++;
+            }
+            if(dd[i][j-1]==-1)continue;
+            ww[i][j-1]=1;
+            while(w<dd[i][j-1]){
+                w++;ls-=dp[w];
+            }
+            if(ls)ww[i][j-1]=0;
+        }
+    }
+    int fl=0;
+    F0R(i,n)fl|=ww[0][i];
+    cout<<(fl?'T':'N')<<'\n';
 }
 int main(){
-    ios_base::sync_with_stdio(0);cin.tie(0);
+    ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     cin>>t;
     while(t--)solve();
