@@ -50,7 +50,16 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define clz __builtin_clz
 
 void solve(){
-    
+    int n,m;cin>>n>>m;
+    int tt=5+2*(int)sqrt(max(m,n));
+    ll ans=0;
+    FOR(i,2,tt){
+        FOR(j,1,i){
+            if(gcd(j,i-j)>1)continue;
+            ans+=1ll*min(n/(i*j),m/(i*(i-j)));
+        }
+    }
+    cout<<ans<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);

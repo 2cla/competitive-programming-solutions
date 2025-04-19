@@ -49,9 +49,39 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 #define clz __builtin_clz
 
-void solve(){
-    
+vector<int> z_function(string s) {
+    int n = s.size();
+    vector<int> z(n);
+    int l = 0, r = 0;
+    for(int i = 1; i < n; ++i) {
+        if (i < r) z[i] = min(r - i, z[i - l]);
+        while (i + z[i] < n && s[z[i]] == s[i + z[i]]) ++z[i];
+        if (i + z[i] > r) l = i, r = i + z[i];
+    }
+    return z;
 }
+void solve(){
+    int n,l,r;cin>>n>>l>>r;
+    string ss;cin>>ss;
+    vi zz=z_function(ss);zz[0]=n;
+    vector<vi>ww(n+1);
+    F0R(i,n)ww[zz[i]].pb(i);
+    set<int>tt;
+    vi ans(n+1);
+    FORd(i,1,n+1){
+        trav(a,ww[i])tt.ins(a);
+        int ctr=0;
+        auto it=tt.begin();
+        while(it!=tt.end()){
+            int pp=*it;
+            ctr++;
+            it=tt.lb(pp+i);
+        }
+        ans[ctr]=max(ans[ctr],i);
+    }
+    F0Rd(i,n)ans[i]=max(ans[i],ans[i+1]);
+    FOR(i,l,r+1)cout<<ans[i]<<' ';cout<<'\n';
+}   
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
