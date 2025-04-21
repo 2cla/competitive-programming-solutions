@@ -49,53 +49,26 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 #define clz __builtin_clz
 
-vector<vl>dp;
-const ll MOD=1e9+7;
-ll ans,n;
-ll add(ll a,ll b){
-    return (a+b)%MOD;
-}
-ll mul(ll a,ll b){
-    return (a*b)%MOD;
-}
-ll rec(ll i,ll k){
-    if(i<=k){
-        ll tt=(((1ll<<(i+1))-1)&n)%MOD;
-        ans=add(ans,mul(tt,tt+1));
-        return -1;
-    }
-    ans=add(ans,dp[i][k]);
-    return k-1;
+void ww(int l,int r,vi&arr){
+    int k=r-l;
+    F0R(i,k)arr[l+i]=1+(i+k/2)%k+l;
 }
 void solve(){
-    ans=0;
-    ll k;cin>>n>>k;
-    F0Rd(i,60){
-        if(k<0)break;
-        if(n&1ll<<i){
-            k=rec(i,k);
-        }
+    int n,k;cin>>n>>k;
+    vi arr(n),brr(n);
+    int i=0;
+    F0R(i,n)brr[i]=1+i/k;
+    while(i<n){
+        ww(i,min(n,i+k),arr);i+=k;
     }
-    cout<<mul(ans,5e8+4)<<'\n';
+    print(arr)
+    cout<<n/k+(n%k!=0)<<'\n';
+    print(brr)
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     cin>>t;
-    dp=vector<vl>(62,vl(62));
-    F0R(i,62)dp[i][0]=2;dp[1][1]=6;dp[2][1]=12;
-    FOR(i,3,62)dp[i][1]=dp[i-1][1]+2;
-    FOR(j,1,62){
-        FOR(i,2,62){
-            if(i>=j){
-                dp[j][i]=mul((1ll<<j)%MOD,((1ll<<j)+1)%MOD);
-            }else if(i+1==j){
-                dp[j][i]=mul((1ll<<j)%MOD,((1ll<<j)-1)%MOD);
-            }else{
-                dp[j][i]=add(dp[j-1][i-1],dp[j-1][i]);
-            }
-        }
-    }
     while(t--)solve();
     return 0;
 }

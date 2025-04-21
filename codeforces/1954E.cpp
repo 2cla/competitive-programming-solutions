@@ -49,53 +49,58 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 #define clz __builtin_clz
 
-vector<vl>dp;
-const ll MOD=1e9+7;
-ll ans,n;
-ll add(ll a,ll b){
-    return (a+b)%MOD;
-}
-ll mul(ll a,ll b){
-    return (a*b)%MOD;
-}
-ll rec(ll i,ll k){
-    if(i<=k){
-        ll tt=(((1ll<<(i+1))-1)&n)%MOD;
-        ans=add(ans,mul(tt,tt+1));
-        return -1;
+struct Tree {
+	typedef pl T;
+	static constexpr T unit = {1e9,-1};
+	T f(T a, T b) {
+        return min(a,b);
     }
-    ans=add(ans,dp[i][k]);
-    return k-1;
-}
+	vector<T> s; int n;
+	Tree(int n = 0, T def = unit) : s(2*n, def), n(n) {}
+	void update(int pos, T val) {
+		for (s[pos += n] = val; pos /= 2;)
+			s[pos] = f(s[pos * 2], s[pos * 2 + 1]);
+	}
+	T query(int b, int e) {
+		T ra = unit, rb = unit;
+		for (b += n, e += n; b < e; b /= 2, e /= 2) {
+			if (b % 2) ra = f(ra, s[b++]);
+			if (e % 2) rb = f(s[--e], rb);
+		}
+		return f(ra, rb);
+	}
+};
 void solve(){
-    ans=0;
-    ll k;cin>>n>>k;
-    F0Rd(i,60){
-        if(k<0)break;
-        if(n&1ll<<i){
-            k=rec(i,k);
+    ll n;cin>>n;
+    vl arr(n);
+    ll mm=0;
+    F0R(i,n){
+        cin>>arr[i];mm=max(mm,arr[i]);
+    }
+    Tree st(n);
+    F0R(i,n)st.update(i,{arr[i],i});
+    vl pre(mm+1);
+    stack<pair<pl,ll>>stt;stt.push({{0,n-1},0});
+    while(!stt.empty()){
+        pair<pl,ll>tt=stt.top();stt.pop();
+        pl ww=st.query(tt.f.f,tt.f.s+1);
+        pre[tt.s]++;pre[ww.f]--;
+        if(tt.f.f<=ww.s-1)stt.push({{tt.f.f,ww.s-1},ww.f});
+        if(ww.s+1<=tt.f.s)stt.push({{ww.s+1,tt.f.s},ww.f});
+    }
+    FOR(i,1,mm+1)pre[i]+=pre[i-1];
+    vl ans(mm+1);
+    FOR(i,1,mm+1){
+        ll j=0;
+        while(i*j<=mm){
+            ans[i]+=pre[i*j];j++;
         }
     }
-    cout<<mul(ans,5e8+4)<<'\n';
+    FOR(i,1,mm+1)cout<<ans[i]<<' ';
+    cout<<'\n';
 }
 int main(){
-    ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
-    int t;
-    cin>>t;
-    dp=vector<vl>(62,vl(62));
-    F0R(i,62)dp[i][0]=2;dp[1][1]=6;dp[2][1]=12;
-    FOR(i,3,62)dp[i][1]=dp[i-1][1]+2;
-    FOR(j,1,62){
-        FOR(i,2,62){
-            if(i>=j){
-                dp[j][i]=mul((1ll<<j)%MOD,((1ll<<j)+1)%MOD);
-            }else if(i+1==j){
-                dp[j][i]=mul((1ll<<j)%MOD,((1ll<<j)-1)%MOD);
-            }else{
-                dp[j][i]=add(dp[j-1][i-1],dp[j-1][i]);
-            }
-        }
-    }
-    while(t--)solve();
+    //ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
+    solve();
     return 0;
 }

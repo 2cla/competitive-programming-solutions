@@ -41,6 +41,8 @@
         "barrier": "cpp",
         "latch": "cpp",
         "semaphore": "cpp",
-        "bit": "cpp"
+        "bit": "cpp",
+        "any": "cpp",
+        "system_error": "cpp"
     }
 }

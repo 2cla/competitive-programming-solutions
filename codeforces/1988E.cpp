@@ -49,53 +49,63 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 #define clz __builtin_clz
 
-vector<vl>dp;
-const ll MOD=1e9+7;
-ll ans,n;
-ll add(ll a,ll b){
-    return (a+b)%MOD;
-}
-ll mul(ll a,ll b){
-    return (a*b)%MOD;
-}
-ll rec(ll i,ll k){
-    if(i<=k){
-        ll tt=(((1ll<<(i+1))-1)&n)%MOD;
-        ans=add(ans,mul(tt,tt+1));
-        return -1;
-    }
-    ans=add(ans,dp[i][k]);
-    return k-1;
-}
 void solve(){
-    ans=0;
-    ll k;cin>>n>>k;
-    F0Rd(i,60){
-        if(k<0)break;
-        if(n&1ll<<i){
-            k=rec(i,k);
+    ll n;cin>>n;
+    vl arr(n);F0R(i,n)cin>>arr[i];
+    vl ans(n);ll aa=0,t1=0,t2=0;
+    vector<vpl>lt(n),rt(n);
+    vpl wt(n);
+    stack<pl>st;
+    F0Rd(i,n){
+        pl tt={arr[i],1};
+        while(!st.empty()&&st.top().f>=arr[i]){
+            t1-=st.top().f*st.top().s;
+            tt.s+=st.top().s;
+            rt[i].pb({st.top().f,-st.top().s});
+            st.pop();
+        }
+        st.push(tt);
+        wt[i].s=tt.s-1;
+        t1+=tt.f*tt.s;
+        aa+=t1;
+        ans[i]-=t1;
+    }
+    st=stack<pl>();
+    F0R(i,n){
+        pl tt={arr[i],1};
+        while(!st.empty()&&st.top().f>=arr[i]){
+            t2-=st.top().f*st.top().s;
+            tt.s+=st.top().s;
+            lt[i].pb(st.top());
+            st.pop();
+        }
+        st.push(tt);
+        wt[i].f=tt.s-1;
+        t2+=tt.f*tt.s;
+        ans[i]-=t2;
+    }
+    F0R(i,n){
+        ans[i]-=arr[i]*(wt[i].f*wt[i].s-1);
+        pqg<pl>ww;
+        trav(a,lt[i])ww.push(a);
+        trav(a,rt[i])ww.push(a);
+        while(!ww.empty()){
+            if(ww.top().s<0){
+                ans[i]+=ww.top().f*(-ww.top().s)*wt[i].f;
+                wt[i].s+=ww.top().s;
+            }else{
+                ans[i]+=ww.top().f*ww.top().s*wt[i].s;
+                wt[i].f-=ww.top().s;
+            }
+            ww.pop();
         }
     }
-    cout<<mul(ans,5e8+4)<<'\n';
+    F0R(i,n)cout<<ans[i]+aa<<' ';cout<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     cin>>t;
-    dp=vector<vl>(62,vl(62));
-    F0R(i,62)dp[i][0]=2;dp[1][1]=6;dp[2][1]=12;
-    FOR(i,3,62)dp[i][1]=dp[i-1][1]+2;
-    FOR(j,1,62){
-        FOR(i,2,62){
-            if(i>=j){
-                dp[j][i]=mul((1ll<<j)%MOD,((1ll<<j)+1)%MOD);
-            }else if(i+1==j){
-                dp[j][i]=mul((1ll<<j)%MOD,((1ll<<j)-1)%MOD);
-            }else{
-                dp[j][i]=add(dp[j-1][i-1],dp[j-1][i]);
-            }
-        }
-    }
     while(t--)solve();
     return 0;
 }
