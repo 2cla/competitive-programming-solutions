@@ -53,11 +53,49 @@ const ll mod=998244353;
 const int dx[4]{1,0,-1,0},dy[4]{0,1,0,-1};
 ll pow(ll a,ll b,ll p=mod){a%=p;ll r=1%p;while(b){if(b&1)r=r*a%p;a=a*a%p;b>>=1;}return r;}
 ll inv(ll x,ll p=mod){return pow(x,p-2,p);}
-ll add(ll a,ll b){return (a+b)%mod;}
-ll mul(ll a,ll b){return (a*b)%mod;}
 
+array<vi, 2> manacher(const string& s) {
+	int n = sz(s);
+	array<vi,2> p = {vi(n+1), vi(n)};
+	FOR(z,0,2) for (int i=0,l=0,r=0; i < n; i++) {
+		int t = r-i+!z;
+		if (i<r) p[z][i] = min(t, p[z][l+t]);
+		int L = i-p[z][i], R = i+p[z][i]-!z;
+		while (L>=1 && R+1<n && s[L-1] == s[R+1])
+			p[z][i]++, L--, R++;
+		if (R>r) l=L, r=R;
+	}
+	return p;
+}
 void solve(){
-
+    ll n,q;cin>>n>>q;
+    string ss;cin>>ss;
+    array<vi,2>pp=manacher(ss);
+    vector<vi>pre(52,vi(n+1));
+    F0R(i,n){
+        if(i&1)pre[2*(ss[i]-97)+1][i+1]=1;
+        else pre[2*(ss[i]-97)][i+1]=1;
+    }
+    FOR(i,1,n+1){
+        F0R(j,52)pre[j][i]+=pre[j][i-1];
+    }
+    F0R(_,q){
+        ll l,r;cin>>l>>r;l--;r--;
+        int c1=ss[l]-97,c2=ss[l+1]-97;
+        if(pre[2*c1][r+1]-pre[2*c1][l]+pre[2*c1+1][r+1]-pre[2*c1+1][l]==r-l+1){
+            cout<<"0\n";continue;
+        }
+        ll ans=((r-l)*(r-l+1))/2-1;
+        if(pre[2*c1+(l&1)][r+1]-pre[2*c1+(l&1)][l]+pre[2*c2+((l+1)&1)][r+1]-pre[2*c2+((l+1)&1)][l]==r-l+1){
+            ans=((r-l)/2)*((r-l)/2+1);
+        }
+        if((r-l+1)&1){
+            if(pp[1][(r+l)/2]*2+1<r-l+1)ans+=r-l+1;
+        }else{
+            if(pp[0][(r+l+1)/2]*2<r-l+1)ans+=r-l+1;
+        }
+        cout<<ans<<'\n';
+    }
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);

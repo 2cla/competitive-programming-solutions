@@ -53,11 +53,46 @@ const ll mod=998244353;
 const int dx[4]{1,0,-1,0},dy[4]{0,1,0,-1};
 ll pow(ll a,ll b,ll p=mod){a%=p;ll r=1%p;while(b){if(b&1)r=r*a%p;a=a*a%p;b>>=1;}return r;}
 ll inv(ll x,ll p=mod){return pow(x,p-2,p);}
-ll add(ll a,ll b){return (a+b)%mod;}
-ll mul(ll a,ll b){return (a*b)%mod;}
 
+vl lrr,rrr;
+vector<vl>g;
+pl rec(ll u,ll p){
+    if(sz(g[u])==1&&u){
+        return {lrr[u],0};
+    }
+    ll tt=0,mm=0;
+    vpl ww;
+    trav(a,g[u]){
+        if(a==p)continue;
+        pl gg=rec(a,u);
+        tt+=gg.s;ww.pb(gg);
+    }
+    trav(a,ww){
+        mm=max(mm,tt-a.s+a.f);
+    }
+    if(mm<=rrr[u]+tt){
+        return{max(mm,lrr[u]+tt),tt};
+    }
+    pl ans={rrr[u]+tt,tt};
+    trav(a,ww){
+        ans.f+=max(0ll,tt-a.s+a.f-rrr[u]-tt);
+        ans.s+=max(0ll,tt-a.s+a.f-rrr[u]-tt);
+    }
+    return ans;
+}
 void solve(){
-
+    ll n;cin>>n;
+    lrr=vl(n);rrr=vl(n);
+    F0R(i,n){
+        ll l,r;cin>>l>>r;
+        lrr[i]=l;rrr[i]=r;
+    }
+    g=vector<vl>(n);
+    F0R(i,n-1){
+        ll u,v;cin>>u>>v;u--;v--;
+        g[u].pb(v);g[v].pb(u);
+    }
+    cout<<rec(0,-1).f<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);

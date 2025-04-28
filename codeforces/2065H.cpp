@@ -55,9 +55,68 @@ ll pow(ll a,ll b,ll p=mod){a%=p;ll r=1%p;while(b){if(b&1)r=r*a%p;a=a*a%p;b>>=1;}
 ll inv(ll x,ll p=mod){return pow(x,p-2,p);}
 ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
-
+struct Tree {
+	typedef array<pl,4> T;
+	static constexpr T unit = {{{-1ll,-1ll},{-1ll,-1ll},{-1ll,-1ll},{-1ll,-1ll}}};
+	T f(T a, T b) {
+        if(a[0].f==-1)return b;
+        if(b[0].f==-1)return a;
+        ll tt,gg,g1,g2;
+        array<pl,4>ww;
+        F0R(i,16){
+            gg=((i>>3&1)<<1)|(i&1);
+            g1=i>>2&3;g2=i&3;
+            tt=mul(a[g1].f,b[g2].s)+mul(a[g1].s,b[g2].f);
+            if((i>>2&1)+(i>>1&1)!=1)tt+=mod-mul(a[g1].s,b[g2].s);
+            tt%=mod;
+            ww[gg].f=add(ww[gg].f,tt);
+            ww[gg].s=add(ww[gg].s,mul(a[g1].s,b[g2].s));
+        }
+        F0R(i,4){
+            ww[i].f=add(ww[i].f,a[i].f+b[i].f);
+            ww[i].s=add(ww[i].s,a[i].s+b[i].s);
+        }
+        return ww;
+    }
+	vector<T> s; int n;
+	Tree(int n = 0, T def = unit) : s(2*n, def), n(n) {}
+	void update(int pos, T val) {
+		for (s[pos += n] = val; pos /= 2;)
+			s[pos] = f(s[pos * 2], s[pos * 2 + 1]);
+	}
+	T query(int b, int e) {
+		T ra = unit, rb = unit;
+		for (b += n, e += n; b < e; b /= 2, e /= 2) {
+			if (b % 2) ra = f(ra, s[b++]);
+			if (e % 2) rb = f(s[--e], rb);
+		}
+		return f(ra, rb);
+	}
+};
 void solve(){
-
+    str ss;cin>>ss;
+    ll n=sz(ss);
+    Tree st(n);
+    F0R(i,n){
+        if(ss[i]=='1')st.update(i,{{{0ll,0ll},{0ll,0ll},{0ll,0ll},{1ll,1ll}}});
+        else st.update(i,{{{1ll,1ll},{0ll,0ll},{0ll,0ll},{0ll,0ll}}});
+    }
+    ll q;cin>>q;
+    F0R(_,q){
+        ll w;cin>>w;w--;
+        if(ss[w]=='0'){
+            st.update(w,{{{0ll,0ll},{0ll,0ll},{0ll,0ll},{1ll,1ll}}});
+            ss[w]='1';
+        }else{
+            st.update(w,{{{1ll,1ll},{0ll,0ll},{0ll,0ll},{0ll,0ll}}});
+            ss[w]='0';
+        }
+        auto ww=st.query(0,n);
+        // debug(st.query(0,2));
+        ll ans=0;
+        F0R(i,4)ans=add(ans,ww[i].f);
+        cout<<ans<<' ';
+    }cout<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
