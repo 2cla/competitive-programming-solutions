@@ -1,5 +1,6 @@
 // I AM A PURE
 #include "bits/stdc++.h"
+#include <ext/pb_ds/assoc_container.hpp>
 #pragma GCC optimize ("O3")
 #pragma GCC target ("sse4")
 #ifndef ONLINE_JUDGE
@@ -8,6 +9,7 @@
     #define debug(...) 0x0d010F2C
 #endif
 using namespace std;
+using namespace __gnu_pbds;
 typedef long long ll;
 typedef long double ld;
 typedef string str;
@@ -21,6 +23,7 @@ typedef vector<pi> vpi;
 typedef vector<pl> vpl;
 typedef unordered_map<int,int> umi;
 typedef unordered_map<ll,ll> uml;
+typedef tree<pi, null_type, less<pi>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
 template<class T> using pq = priority_queue<T>;
 template<class T> using pqg = priority_queue<T,vector<T>,greater<T>>;
 #define FOR(i,a,b) for(int i=a;i<(b);i++)
@@ -44,7 +47,6 @@ template<class T> using pqg = priority_queue<T,vector<T>,greater<T>>;
 #define pct __builtin_popcount
 #define YES cout<<"yes\n"
 #define NO cout<<"no\n"
-#define dbg debug
 
 const ll mod=998244353;
 // const ll mod=1e9+7;
@@ -53,10 +55,44 @@ ll pow(ll a,ll b,ll p=mod){a%=p;ll r=1%p;while(b){if(b&1)r=r*a%p;a=a*a%p;b>>=1;}
 ll inv(ll x,ll p=mod){return pow(x,p-2,p);}
 ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
-mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-
+int c;
+vi dp,mm;
+void rec(int ww){
+    if(dp[ww]==1)return;
+    dp[ww]=1;
+    F0R(i,c){
+        if(!(ww&(1<<i)))continue;
+        rec(ww^(1<<i));
+    }
+}
 void solve(){
+    int n,k;cin>>n>>c>>k;
+    str ss;cin>>ss;
+    vi dd(c);
+    mm=vi(1<<c);
+    F0R(i,min(n,k-1)){
+        dd[ss[i]-65]++;
+    }
+    FOR(i,k-1,n){
+        dd[ss[i]-65]++;
+        int tt=0;
+        F0R(j,c){
+            if(dd[j])tt|=1<<j;
+        }
+        mm[((1<<c)-1)^tt]=1;
+        dd[ss[i-k+1]-65]--;
+    }
 
+    mm[((1<<c)-1)^(1<<(ss[n-1]-65))]=1;
+    dp=vi(1<<c);
+    F0R(i,1<<c){
+        if(mm[i])rec(i);
+    }
+    int ans=c;
+    F0R(i,1<<c){
+        if(!dp[i])ans=min(ans,pct(i));
+    }
+    cout<<ans<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);

@@ -78,14 +78,23 @@ void solve(){
         }
         dpp[i]=ww+1;
     }
-    debug(dpp);
+    vector<vl>gg(26,vl(n));
+    vl gs(26,1e9);
+    F0Rd(i,n){
+        gs[ss[i]-97]=i+1;
+        F0R(j,26){
+            gg[j][i]=gs[j];
+        }
+    }
     ll q;cin>>q;
     F0R(_,q){
         str qq;cin>>qq;
         ll p1=0,p2=0;
         while(p1<sz(qq)&&p2<n){
-            if(qq[p1]==ss[p2])p1++;
-            p2++;
+            if(gg[qq[p1]-97][p2]>n)break;
+            else{
+                p2=gg[qq[p1]-97][p2];p1++;
+            }
         }
         if(p1<sz(qq)){
             cout<<"0\n";continue;
