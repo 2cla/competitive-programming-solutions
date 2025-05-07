@@ -46,8 +46,8 @@ template<class T> using pqg = priority_queue<T,vector<T>,greater<T>>;
 #define NO cout<<"no\n"
 #define dbg debug
 
-const ll mod=998244353;
-// const ll mod=1e9+7;
+// const ll mod=998244353;
+const ll mod=1e9+7;
 const int dx[4]{1,0,-1,0},dy[4]{0,1,0,-1};
 ll pow(ll a,ll b,ll p=mod){a%=p;ll r=1%p;while(b){if(b&1)r=r*a%p;a=a*a%p;b>>=1;}return r;}
 ll inv(ll x,ll p=mod){return pow(x,p-2,p);}
@@ -55,13 +55,50 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
+const int N=1e6+1;
+vl ans(N);
 void solve(){
-    
+    int n;cin>>n;
+    cout<<ans[n]<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     // t=1;
+    ll tt=0;
+    vl dp(N);
+    vi pp(N,1);
+    FOR(i,2,N){
+        if(!pp[i])continue;
+        int j=2;
+        while(i*j<N){
+            pp[i*j]=0;j++;
+        }
+    }
+    set<int>pr;
+    FOR(i,2,N){
+        if(pp[i])pr.ins(i);
+    }
+    vector<vi>fl(N,vi());
+    trav(a,pr){
+        int j=1;
+        while(j*a<N){
+            fl[j*a].pb(a);j++;
+        }
+    }
+    FOR(i,2,N){
+        trav(a,fl[i]){
+            tt-=(a-dp[a])%a;
+            dp[a]++;tt+=(a-dp[a])%a;
+            dp[a]%=a;
+        }
+        if(!(i%4)){
+            tt-=(2*dp[4])%4;
+            dp[4]++;dp[4]%=4;
+            tt+=(2*dp[4])%4;
+        }
+        ans[i]=add(tt,ans[i-1]);
+    }
     cin>>t;
     while(t--)solve();
     return 0;

@@ -56,7 +56,27 @@ ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 void solve(){
-    
+    int n;cin>>n;
+    vi arr(n);F0R(i,n)cin>>arr[i];
+    vector<vi>pre(n+1,vi(60));
+    vi tt(n+1);
+    FOR(i,1,n+1){
+        tt[i]=tt[i-1]^arr[i-1];
+    }
+    F0R(j,30)pre[0][2*j]=1;
+    F0R(i,n){
+        F0R(j,30){
+            pre[i+1][2*j]=pre[i][2*j]+!(tt[i+1]>>j&1);
+            pre[i+1][2*j+1]=pre[i][2*j+1]+(tt[i+1]>>j&1);
+        }
+    }
+    ll ans=0;
+    F0R(i,n){
+        int w=31-clz(arr[i]);
+        ans+=1ll*pre[i][2*w]*(pre[n][2*w]-pre[i][2*w]);
+        ans+=1ll*pre[i][2*w+1]*(pre[n][2*w+1]-pre[i][2*w+1]);
+    }
+    cout<<ans<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);

@@ -55,8 +55,62 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
+vector<vi>g;
+map<int,vi>kk;
+vi ww,jj,dp2;
+int k;
+vi rec(int u,int p){
+    vi tt(k);
+    trav(a,g[u]){
+        if(a==p)continue;
+        vi tt2=rec(a,u);
+        F0R(i,k){
+            tt[i]+=tt2[i];
+        }
+    }
+    trav(a,kk[u])tt[a]++;
+    int mm=0;
+    F0R(i,k){
+        if(tt[i]&1)mm|=1<<i;
+    }
+    ww[mm]=1;
+    return tt;
+}
 void solve(){
-    
+    int n;cin>>n;
+    g=vector<vi>(n);
+    F0R(i,n-1){
+        int u,v;cin>>u>>v;u--;v--;
+        g[u].pb(v);g[v].pb(u);
+    }
+    cin>>k;
+    kk=map<int,vi>();
+    F0R(i,k){
+        int a,b;cin>>a>>b;a--;b--;
+        kk[a].pb(i);kk[b].pb(i);
+    }
+    ww=vi(1<<k);
+    dp2=vi(1<<k);
+    jj=vi();
+    rec(0,-1);
+    F0R(i,1<<k){
+        if(ww[i])jj.pb(i);
+    }
+    debug(jj);
+    deque<pi>qq;qq.pb({0,0});
+    while(!qq.empty()){
+        auto[x,y]=qq.front();
+        if(dp2[x]){
+            qq.pop_front();continue;
+        }
+        if(x==(1<<k)-1){
+            cout<<y<<'\n';return;
+        }
+        dp2[x]=1;
+        trav(a,jj){
+            qq.pb({x|a,y+1});
+        }
+    }
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);

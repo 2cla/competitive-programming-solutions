@@ -55,8 +55,43 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
+vector<vl>g;
+vl ww,tt,ss;
+ll rec(ll u,ll p,ll l){
+    ll aa=0;
+    if(g[u][0]!=-1)aa+=rec(g[u][0],u,l);
+    if(ww[u]!=-1){
+        tt[l+aa]=ww[u];
+        ss.pb(l+aa);
+    }
+    if(g[u][1]!=-1)aa+=rec(g[u][1],u,l+aa+1);
+    return aa+1;
+}
 void solve(){
-    
+    ll n,c;cin>>n>>c;
+    g=vector<vl>(n,vl(2,-1));
+    ww=vl(n);
+    ss=vl();ss.pb(0);ss.pb(n+1);
+    tt=vl(n+2);tt[0]=1;tt[n+1]=c;
+    F0R(i,n){
+        ll u,v,w;cin>>u>>v>>w;u--;v--;
+        if(u!=-2)g[i][0]=u;
+        if(v!=-2)g[i][1]=v;
+        ww[i]=w;
+    }
+    rec(0,-1,1);
+    ll ans=1;
+    sort(all(ss));
+    F0R(i,sz(ss)){
+        if(!i)continue;
+        ll tm=1,nn=tt[ss[i]]-tt[ss[i-1]]+ss[i]-ss[i-1]-1,kk=ss[i]-ss[i-1]-1;
+        F0R(j,kk){
+            tm=mul(tm,nn);
+            tm=mul(tm,inv(j+1));
+            nn--;
+        }
+        ans=mul(ans,tm);
+    }cout<<ans<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);

@@ -55,8 +55,44 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
+vector<vl>g;
+vl dd,nm,dm;
+void rec(ll u,ll p){
+    if(sz(g[u])==1&&u){
+        dd[u]=0;return;
+    }
+    ll tt=1e9;
+    trav(a,g[u]){
+        if(a==p)continue;
+        rec(a,u);
+        tt=min(1+dd[a],tt);
+    }
+    dd[u]=tt;
+}
+void dp(ll u,ll p){
+    if(u){
+        nm[u]=mul(nm[p],dd[u]);
+        dm[u]=mul(dm[p],dd[u]+1);
+    }
+    trav(a,g[u]){
+        if(a==p)continue;
+        dp(a,u);
+    }
+}
 void solve(){
-    
+    ll n;cin>>n;
+    g=vector<vl>(n);
+    dd=vl(n),nm=vl(n),dm=vl(n);
+    F0R(i,n-1){
+        ll u,v;cin>>u>>v;u--;v--;
+        g[u].pb(v);g[v].pb(u);
+    }
+    rec(0,-1);
+    nm[0]=1;dm[0]=1;
+    dp(0,-1);
+    F0R(i,n){
+        cout<<mul(nm[i],inv(dm[i],mod))<<' ';
+    }cout<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);

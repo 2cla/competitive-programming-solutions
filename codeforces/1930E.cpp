@@ -55,13 +55,34 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
+const ll N=1e6+5;
+vl facts(N);
+vl invfacts(N);
+ll nCk(ll n,ll k){
+    ll tmp=(facts[n]*invfacts[k])%mod;
+    return(tmp*invfacts[n-k])%mod;
+}
 void solve(){
-    
+    ll n;cin>>n;
+    vl ans((n-1)/2,1);
+    FOR(i,1,(n+1)/2){
+        ll j=i;
+        while(2*j<n){
+            ans[i-1]=add(ans[i-1],nCk(n,2*j));
+            ans[i-1]=add(ans[i-1],mod-nCk(n-1-2*(j-i),2*i-1));
+            j+=i;
+        }
+    }
+    prt(ans)
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     // t=1;
+    facts[0]=1;invfacts[0]=1;
+    FOR(i,1,N)facts[i]=(facts[i-1]*i)%mod;
+    invfacts[N-1]=inv(facts[N-1],mod);
+    FORd(i,1,N-1)invfacts[i]=(invfacts[i+1]*(i+1))%mod;
     cin>>t;
     while(t--)solve();
     return 0;

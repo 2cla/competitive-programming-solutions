@@ -34,7 +34,7 @@ template<class T> using pqg = priority_queue<T,vector<T>,greater<T>>;
 #define pb push_back
 #define eb emplace_back
 #define f first
-#define s second
+#define ss second
 #define lb lower_bound
 #define ub upper_bound
 #define all(x) x.begin(), x.end()
@@ -55,13 +55,59 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
+vi dp(2e5+1,1e9),g(2e5+1,-1),tt;
 void solve(){
-    
+    ll n,x,y,s;cin>>n>>x>>y>>s;
+    if((n*x)%y!=s%y){
+        cout<<"no\n";return;
+    }
+    if(x+(n-1)*(x%y)>s){
+        cout<<"no\n";return;
+    }
+    int tt=(s-n*(x%y))/y,cc=x/y,dd=x/y;
+    vi ans(n,x%y);ans[0]=x;
+    F0R(i,n){
+        if(tt<cc)break;
+        if(dp[tt-cc]<=n-i-1){
+            F0R(j,i){
+                ans[1+j]+=((x/y)+j+1)*y;
+            }
+            deque<int>tmp;
+            int ww=tt-cc;
+            while(ww){
+                tmp.pb(dp[ww]-dp[g[ww]]);
+                ww=g[ww];
+            }
+            ww=n-1;
+            while(!tmp.empty()){
+                ans[ww]+=(tmp.front()-1)*y;
+                tmp.front()--;ww--;
+                if(!tmp.front())tmp.pop_front();
+            }
+            cout<<"yes\n";
+            prt(ans);return;
+        }
+        dd++;
+        cc+=dd;
+    }
+    cout<<"no\n";
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     // t=1;
+    dp[0]=0;
+    F0R(i,640){
+        tt.pb((i*(i+1))/2);
+    }
+    FOR(i,1,2e5+1){
+        F0R(j,640){
+            if(tt[j]>i)break;
+            if(dp[i]>j+1+dp[i-tt[j]]){
+                dp[i]=j+1+dp[i-tt[j]];g[i]=i-tt[j];
+            }
+        }
+    }
     cin>>t;
     while(t--)solve();
     return 0;

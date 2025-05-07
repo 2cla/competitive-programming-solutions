@@ -55,13 +55,40 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
+vi ppp;
 void solve(){
-    
+    int n;cin>>n;
+    vi ans(n);ans[0]=ppp[0];
+    set<pi>vis;vis.ins({0,0});
+    pi cc={0,0};
+    F0R(i,n-1){
+        if(vis.count({cc.f,(cc.s+1)%(cc.f+1)})){
+            cc.f++;
+            ans[i+1]=ppp[cc.f];
+        }else{
+            cc.s=(cc.s+1)%(cc.f+1);
+            ans[i+1]=ppp[cc.s];
+        }
+        vis.ins(cc);
+    }
+    prt(ans)
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     // t=1;
+    int N=2e4;
+    vi pp(N+1,1);
+    FOR(i,2,N){
+        if(!pp[i])continue;
+        int j=2;
+        while(i*j<=N){
+            pp[i*j]=0;j++;
+        }
+    }
+    FOR(i,2,N){
+        if(pp[i])ppp.pb(i);
+    }
     cin>>t;
     while(t--)solve();
     return 0;
