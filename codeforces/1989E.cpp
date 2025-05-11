@@ -55,70 +55,28 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-vi ppp;
-vi eulerWalk(vector<vector<pi>>& gr, int nedges, int src=0) {
-	int n = sz(gr);
-	vi D(n), its(n), eu(nedges), ret, s = {src};
-	D[src]++; // to allow Euler paths, not just cycles
-	while (!s.empty()) {
-		int x = s.back(), y, e, &it = its[x], end = sz(gr[x]);
-		if (it == end){ ret.push_back(x); s.pop_back(); continue; }
-		tie(y, e) = gr[x][it++];
-		if (!eu[e]) {
-			D[x]--, D[y]++;
-			eu[e] = 1; s.push_back(y);
-		}}
-	for (int x : D) if (x < 0 || sz(ret) != nedges+1) return {};
-	return {ret.rbegin(), ret.rend()};
-}
 void solve(){
-    int n;cin>>n;
-    int lo=1,hi=2e3;
-    while(lo<hi){
-        int mid=(lo+hi)/2;
-        if((mid*(mid+1))/2<n-1){
-            lo=mid+1;
-        }else if(!(mid&1)&&mid*mid/2<n-2){
-            lo=mid+1;
-        }else hi=mid;
-    }
-    vector<vpi>gr(lo);
-    int cc=0,dd=0;
-    F0R(i,lo){
-        F0R(j,i+1){
-            if(!(lo&1)){
-                if(j+lo/2==i){
-                    if(dd)continue;
-                    dd++;
-                }
+    ll n,k;cin>>n>>k;
+    vector<vl>dp(k+1,vl(n+1));
+    vl dp2(k+1);dp[0][0]=1;dp2[0]=1;dp[1][2]=1;
+    FOR(j,1,n+1){
+        FORd(i,1,k+1){
+            dp[i][j]=add(dp[i][j],dp2[i-1]);
+            if(j>=2)dp[i][j]=add(dp[i][j],mod-dp[i-1][j-2]);
+            if(i==k){
+                if(j>=2)dp[k][j]=add(dp[k][j],mod-dp[k][j-2]);
+                dp[k][j]=add(dp[k][j],dp2[k]);
             }
-            gr[i].pb({j,cc});
-            gr[j].pb({i,cc});
-            cc++;
+            dp2[i]=add(dp2[i],dp[i][j]);
         }
     }
-    vi ww=eulerWalk(gr,cc);
-    F0R(i,n){
-        cout<<ppp[ww[i]]<<' ';
-    }cout<<'\n';
+    cout<<add(dp[k][n],add(dp[k][n-2],dp[k-1][n-2]))<<'\n';
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
-    // t=1;
-    int N=2e4;
-    vi pp(N+1,1);
-    FOR(i,2,N){
-        if(!pp[i])continue;
-        int j=2;
-        while(i*j<=N){
-            pp[i*j]=0;j++;
-        }
-    }
-    FOR(i,2,N){
-        if(pp[i])ppp.pb(i);
-    }
-    cin>>t;
+    t=1;
+    // cin>>t;
     while(t--)solve();
     return 0;
 }

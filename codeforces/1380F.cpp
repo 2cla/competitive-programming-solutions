@@ -55,70 +55,68 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-vi ppp;
-vi eulerWalk(vector<vector<pi>>& gr, int nedges, int src=0) {
-	int n = sz(gr);
-	vi D(n), its(n), eu(nedges), ret, s = {src};
-	D[src]++; // to allow Euler paths, not just cycles
-	while (!s.empty()) {
-		int x = s.back(), y, e, &it = its[x], end = sz(gr[x]);
-		if (it == end){ ret.push_back(x); s.pop_back(); continue; }
-		tie(y, e) = gr[x][it++];
-		if (!eu[e]) {
-			D[x]--, D[y]++;
-			eu[e] = 1; s.push_back(y);
-		}}
-	for (int x : D) if (x < 0 || sz(ret) != nedges+1) return {};
-	return {ret.rbegin(), ret.rend()};
-}
-void solve(){
-    int n;cin>>n;
-    int lo=1,hi=2e3;
-    while(lo<hi){
-        int mid=(lo+hi)/2;
-        if((mid*(mid+1))/2<n-1){
-            lo=mid+1;
-        }else if(!(mid&1)&&mid*mid/2<n-2){
-            lo=mid+1;
-        }else hi=mid;
-    }
-    vector<vpi>gr(lo);
-    int cc=0,dd=0;
-    F0R(i,lo){
-        F0R(j,i+1){
-            if(!(lo&1)){
-                if(j+lo/2==i){
-                    if(dd)continue;
-                    dd++;
-                }
-            }
-            gr[i].pb({j,cc});
-            gr[j].pb({i,cc});
-            cc++;
+vl arr;
+struct Tree {
+	typedef array<ll,6> T;
+	static constexpr T unit = {-1,-1,0,0,0,0};
+	T f(T a, T b) {
+        T ww;
+        if(a[0]==-1)return b;
+        if(b[0]==-1)return a;
+        ww[0]=a[0];ww[1]=b[1];
+        int fl=(arr[a[1]]==1&&arr[b[0]]<9),fl2=(a[1]>a[0]),fl3=(b[1]>b[0]);
+        ww[2]=mul(a[2],b[2]);
+        ww[3]=mul(a[3],b[2]);
+        ww[4]=mul(a[2],b[4]);
+        ww[5]=mul(a[3],b[4]);
+        if(fl){
+            ll mm=9-arr[b[0]];
+            ww[2]=add(ww[2],mul(mul(a[4],b[3]),mm));
+            ww[3]=add(ww[3],mul(mul(fl2?a[5]:0,b[3]),mm));
+            ww[4]=add(ww[4],mul(mul(a[4],fl3?b[5]:0),mm));
+            ww[5]=add(ww[5],mul(mul(fl2?a[5]:0,fl3?b[5]:0),mm));
         }
+        return ww;
     }
-    vi ww=eulerWalk(gr,cc);
+	vector<T> s; int n;
+	Tree(int n = 0, T def = unit) : s(2*n, def), n(n) {}
+	void update(int pos, T val) {
+		for (s[pos += n] = val; pos /= 2;)
+			s[pos] = f(s[pos * 2], s[pos * 2 + 1]);
+	}
+	T query(int b, int e) {
+		T ra = unit, rb = unit;
+		for (b += n, e += n; b < e; b /= 2, e /= 2) {
+			if (b % 2) ra = f(ra, s[b++]);
+			if (e % 2) rb = f(s[--e], rb);
+		}
+		return f(ra, rb);
+	}
+};
+void solve(){
+    ll n,m;cin>>n>>m;
+    str ss;cin>>ss;
+    ll nl=n;
+    if(n&(n-1))nl=1ll<<(64-__builtin_clzll(n));
+    arr=vl(nl);F0R(i,n)arr[i]=ss[i]-'0';
+    Tree st(nl);
     F0R(i,n){
-        cout<<ppp[ww[i]]<<' ';
-    }cout<<'\n';
+        st.update(i,{i,i,arr[i]+1,1,1,0});
+        auto ww=st.query(0,n);
+    }
+    F0R(_,m){
+        ll x,d;cin>>x>>d;x--;
+        arr[x]=d;
+        st.update(x,{x,x,d+1,1,1,0});
+        auto ww=st.query(0,nl);
+        cout<<ww[2]<<'\n';
+    }
 }
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
-    // t=1;
-    int N=2e4;
-    vi pp(N+1,1);
-    FOR(i,2,N){
-        if(!pp[i])continue;
-        int j=2;
-        while(i*j<=N){
-            pp[i*j]=0;j++;
-        }
-    }
-    FOR(i,2,N){
-        if(pp[i])ppp.pb(i);
-    }
-    cin>>t;
+    t=1;
+    // cin>>t;
     while(t--)solve();
     return 0;
 }
