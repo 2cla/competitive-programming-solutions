@@ -43,6 +43,7 @@
         "semaphore": "cpp",
         "bit": "cpp",
         "any": "cpp",
-        "system_error": "cpp"
+        "system_error": "cpp",
+        "numeric": "cpp"
     }
 }
