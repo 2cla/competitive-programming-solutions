@@ -2,11 +2,6 @@
 #include "bits/stdc++.h"
 #pragma GCC optimize ("O3")
 #pragma GCC target ("sse4")
-#ifndef ONLINE_JUDGE
-    #include "debug.h"
-#else
-    #define debug(...) 0x0d010F2C
-#endif
 using namespace std;
 typedef long long ll;
 typedef long double ld;
@@ -55,36 +50,40 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-vl grs;
-vl sieve(ll n){
-    vl is_prime(n+1,-1);
-    ll idx=1;
-    is_prime[0]=0;is_prime[1]=1;
-    for(ll i=3;i<=n;i+=2){
-        if(is_prime[i]==-1){
-            idx++;
-            for(ll j=i;j<=n;j+=2*i){
-                if(is_prime[j]==-1)is_prime[j]=idx;
+void solve(){
+    ll m;cin>>m;
+    vl mrr(m);F0R(i,m)cin>>mrr[i];
+    vl dp(505,1e8);dp[0]=0;
+    vector<string>cc(505);
+    F0R(i,m){
+        vl dp2(505,1e8);
+        vector<string>cc2(505);
+        F0R(j,505){
+            if(dp[j]>1e7)continue;
+            if(j-mrr[i]>=0){
+                if(dp[j]<dp2[j-mrr[i]]){
+                    dp2[j-mrr[i]]=dp[j];
+                    cc2[j-mrr[i]]=cc[j]+'D';
+                }
+            }
+            if(j+mrr[i]<505){
+                if(max(j+mrr[i],dp[j])<dp2[j+mrr[i]]){
+                    dp2[j+mrr[i]]=max(j+mrr[i],dp[j]);
+                    cc2[j+mrr[i]]=cc[j]+'U';
+                }
             }
         }
+        dp=dp2;cc=cc2;
     }
-    return is_prime;
-}
-void solve(){
-    ll n;cin>>n;
-    vl arr(n);F0R(i,n)cin>>arr[i];
-    ll gr=0;
-    trav(a,arr){
-        if(a&1)gr^=grs[a];
+    if(dp[0]>1e7){
+        cout<<"IMPOSSIBLE\n";return;
     }
-    cout<<(gr?"Alice":"Bob")<<'\n';
+    cout<<cc[0]<<'\n';
 }
-
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     // t=1;
-    grs=sieve(1e7+1);
     cin>>t;
     while(t--)solve();
     return 0;

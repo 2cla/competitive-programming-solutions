@@ -55,36 +55,57 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-vl grs;
-vl sieve(ll n){
-    vl is_prime(n+1,-1);
-    ll idx=1;
-    is_prime[0]=0;is_prime[1]=1;
-    for(ll i=3;i<=n;i+=2){
-        if(is_prime[i]==-1){
-            idx++;
-            for(ll j=i;j<=n;j+=2*i){
-                if(is_prime[j]==-1)is_prime[j]=idx;
+vl aa(1e6+1),bb(1e6+1);
+void solve(){
+    ll n;cin>>n;
+    vl arr(n),brr(n);
+    F0R(i,n)cin>>arr[i];
+    F0R(i,n)cin>>brr[i];
+    ll ww=0;
+    F0R(i,n){
+        ww+=arr[i];ww-=brr[i];
+    }
+    if(ww<0){
+        cout<<"-1\n";return;
+    }
+    set<ll>fl;fl.ins(1e9);
+    if(ww){
+        FOR(i,1,(ll)sqrt(n*1e6)+5){
+            if(!(ww%i)){
+                fl.ins(i);
+                if(ww/i<=1e9)fl.ins(ww/i);
             }
         }
     }
-    return is_prime;
-}
-void solve(){
-    ll n;cin>>n;
-    vl arr(n);F0R(i,n)cin>>arr[i];
-    ll gr=0;
-    trav(a,arr){
-        if(a&1)gr^=grs[a];
+    trav(a,brr)bb[a]++;
+    vl ata;
+    trav(a,fl){
+        ll ff=1;
+        ata=vl();
+        F0R(i,n){
+            aa[arr[i]%a]++;
+            ata.pb(arr[i]%a);
+        }
+        trav(a,ata){
+            if(aa[a]!=bb[a]){
+                ff=0;break;
+            }
+        }
+        trav(a,ata){
+            aa[a]=0;
+        }
+        if(ff){
+            trav(a,brr)bb[a]=0;
+            cout<<a<<'\n';return;
+        }
     }
-    cout<<(gr?"Alice":"Bob")<<'\n';
+    trav(a,brr)bb[a]=0;
+    cout<<"-1\n";
 }
-
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     // t=1;
-    grs=sieve(1e7+1);
     cin>>t;
     while(t--)solve();
     return 0;

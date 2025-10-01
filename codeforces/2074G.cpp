@@ -55,36 +55,28 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-vl grs;
-vl sieve(ll n){
-    vl is_prime(n+1,-1);
-    ll idx=1;
-    is_prime[0]=0;is_prime[1]=1;
-    for(ll i=3;i<=n;i+=2){
-        if(is_prime[i]==-1){
-            idx++;
-            for(ll j=i;j<=n;j+=2*i){
-                if(is_prime[j]==-1)is_prime[j]=idx;
-            }
-        }
+vector<vl>dp;
+vl arr;
+ll rec(ll i,ll j){
+    if(i+1>=j||dp[i][j]>0)return dp[i][j];
+    ll tmp=rec(i+1,j);
+    FOR(k,i+1,j){
+        tmp=max(tmp,rec(i,k)+rec(k+1,j));
+        tmp=max(tmp,arr[i]*arr[k]*arr[j]+rec(i+1,k-1)+rec(k+1,j-1));
     }
-    return is_prime;
+    dp[i][j]=tmp;
+    return tmp;
 }
 void solve(){
     ll n;cin>>n;
-    vl arr(n);F0R(i,n)cin>>arr[i];
-    ll gr=0;
-    trav(a,arr){
-        if(a&1)gr^=grs[a];
-    }
-    cout<<(gr?"Alice":"Bob")<<'\n';
+    arr=vl(n);F0R(i,n)cin>>arr[i];
+    dp=vector<vl>(n,vl(n));
+    cout<<rec(0,n-1)<<'\n';
 }
-
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     // t=1;
-    grs=sieve(1e7+1);
     cin>>t;
     while(t--)solve();
     return 0;

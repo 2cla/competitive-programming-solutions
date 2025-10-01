@@ -55,36 +55,68 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-vl grs;
-vl sieve(ll n){
-    vl is_prime(n+1,-1);
-    ll idx=1;
-    is_prime[0]=0;is_prime[1]=1;
-    for(ll i=3;i<=n;i+=2){
-        if(is_prime[i]==-1){
-            idx++;
-            for(ll j=i;j<=n;j+=2*i){
-                if(is_prime[j]==-1)is_prime[j]=idx;
-            }
+ll n;
+vl arr;
+vector<vl>idxl;
+ll bty(ll c){
+    ll tt=c,sc=0;
+    ll l=0,r=n-1;
+    pq<ll>lq,rq;
+    vl vis(n);
+    F0R(i,n){
+        if(arr[i]>=c){
+            lq.push(-i);rq.push(i);
         }
     }
-    return is_prime;
+    while(1){
+        if(!tt)return sc;
+        if(!sz(lq)||!sz(rq)){
+            tt--;
+            trav(a,idxl[tt]){
+                lq.push(-a);rq.push(a);
+            }
+            continue;
+        }
+        ll x1=lq.top();
+        ll x2=rq.top();
+        if(vis[-x1]){
+            lq.pop();continue;
+        }
+        if(vis[x2]){
+            rq.pop();continue;
+        }
+        sc+=x2+x1;
+        vis[x2]=1;vis[-x1]=1;
+        lq.pop();rq.pop();
+        tt--;
+        trav(a,idxl[tt]){
+            lq.push(-a);rq.push(a);
+        }
+    }
 }
 void solve(){
-    ll n;cin>>n;
-    vl arr(n);F0R(i,n)cin>>arr[i];
-    ll gr=0;
-    trav(a,arr){
-        if(a&1)gr^=grs[a];
+    cin>>n;
+    arr=vl(n);F0R(i,n)cin>>arr[i];
+    idxl=vector<vl>(n+1);
+    F0R(i,n){
+        idxl[arr[i]].pb(i);
     }
-    cout<<(gr?"Alice":"Bob")<<'\n';
+    ll lo=1,hi=n;
+    while(hi-lo>3){
+        ll t1=lo+(hi-lo)/3,t2=hi-(hi-lo)/3;
+        if(bty(t1)<bty(t2))lo=t1;
+        else hi=t2;
+    }
+    ll ans=0;
+    FOR(i,lo,hi+1){
+        ans=max(ans,bty(i));
+    }
+    cout<<ans<<'\n';
 }
-
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     // t=1;
-    grs=sieve(1e7+1);
     cin>>t;
     while(t--)solve();
     return 0;

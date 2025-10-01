@@ -2,11 +2,6 @@
 #include "bits/stdc++.h"
 #pragma GCC optimize ("O3")
 #pragma GCC target ("sse4")
-#ifndef ONLINE_JUDGE
-    #include "debug.h"
-#else
-    #define debug(...) 0x0d010F2C
-#endif
 using namespace std;
 typedef long long ll;
 typedef long double ld;
@@ -15,6 +10,7 @@ typedef pair<int, int> pi;
 typedef pair<ll,ll> pl;
 typedef pair<ld,ld> pd;
 typedef vector<int> vi;
+typedef vector<bool> vb;
 typedef vector<ld> vd;
 typedef vector<ll> vl;
 typedef vector<pi> vpi;
@@ -55,37 +51,24 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-vl grs;
-vl sieve(ll n){
-    vl is_prime(n+1,-1);
-    ll idx=1;
-    is_prime[0]=0;is_prime[1]=1;
-    for(ll i=3;i<=n;i+=2){
-        if(is_prime[i]==-1){
-            idx++;
-            for(ll j=i;j<=n;j+=2*i){
-                if(is_prime[j]==-1)is_prime[j]=idx;
+void solve(int n,int m){
+    vi mrr(m);F0R(i,m)cin>>mrr[i];
+    vb dp(n+1);
+    F0R(i,n){
+        if(!dp[i]){
+            trav(a,mrr){
+                if(i+a<=n)dp[i+a]=1;
             }
         }
     }
-    return is_prime;
+    cout<<(dp[n]?"Stan ":"Ollie ")<<"wins\n";
 }
-void solve(){
-    ll n;cin>>n;
-    vl arr(n);F0R(i,n)cin>>arr[i];
-    ll gr=0;
-    trav(a,arr){
-        if(a&1)gr^=grs[a];
-    }
-    cout<<(gr?"Alice":"Bob")<<'\n';
-}
-
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
-    // t=1;
-    grs=sieve(1e7+1);
-    cin>>t;
-    while(t--)solve();
+    t=1;
+    // cin>>t;
+    int n,m;
+    while(cin>>n>>m)solve(n,m);
     return 0;
 }

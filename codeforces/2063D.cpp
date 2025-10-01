@@ -55,36 +55,52 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-vl grs;
-vl sieve(ll n){
-    vl is_prime(n+1,-1);
-    ll idx=1;
-    is_prime[0]=0;is_prime[1]=1;
-    for(ll i=3;i<=n;i+=2){
-        if(is_prime[i]==-1){
-            idx++;
-            for(ll j=i;j<=n;j+=2*i){
-                if(is_prime[j]==-1)is_prime[j]=idx;
+void solve(){
+    ll n,m;cin>>n>>m;
+    vl arr(n);vl brr(m);
+    F0R(i,n)cin>>arr[i];
+    F0R(i,m)cin>>brr[i];
+    sort(all(arr));sort(all(brr));
+    ll kmax=min({m,n,(m+n)/3});
+    cout<<kmax<<'\n';
+    ll ctr=0;
+    pqg<ll>pq0,pq2;
+    ll nn=n,mm=m;
+    FOR(i,1,kmax+1){
+        if(!m){
+            ctr-=pq2.top();
+            pq2.pop();
+            ctr+=arr[nn-1-sz(pq0)]-arr[sz(pq0)];
+            pq0.push(arr[nn-1-sz(pq0)]-arr[sz(pq0)]);
+            ctr+=arr[nn-1-sz(pq0)]-arr[sz(pq0)];
+            pq0.push(arr[nn-1-sz(pq0)]-arr[sz(pq0)]);
+            n-=3;
+        }else if(!n){
+            ctr-=pq0.top();
+            pq0.pop();
+            ctr+=brr[mm-1-sz(pq2)]-brr[sz(pq2)];
+            pq2.push(brr[mm-1-sz(pq2)]-brr[sz(pq2)]);
+            ctr+=brr[mm-1-sz(pq2)]-brr[sz(pq2)];
+            pq2.push(brr[mm-1-sz(pq2)]-brr[sz(pq2)]);
+            m-=3;
+        }else{
+            if(m==1||(n>1&&arr[nn-1-sz(pq0)]-arr[sz(pq0)]>brr[mm-1-sz(pq2)]-brr[sz(pq2)])){
+                ctr+=arr[nn-1-sz(pq0)]-arr[sz(pq0)];
+                pq0.push(arr[nn-1-sz(pq0)]-arr[sz(pq0)]);
+                n-=2;m--;
+            }else{
+                ctr+=brr[mm-1-sz(pq2)]-brr[sz(pq2)];
+                pq2.push(brr[mm-1-sz(pq2)]-brr[sz(pq2)]);
+                m-=2;n--;
             }
         }
-    }
-    return is_prime;
+        cout<<ctr<<' ';
+    }cout<<'\n';
 }
-void solve(){
-    ll n;cin>>n;
-    vl arr(n);F0R(i,n)cin>>arr[i];
-    ll gr=0;
-    trav(a,arr){
-        if(a&1)gr^=grs[a];
-    }
-    cout<<(gr?"Alice":"Bob")<<'\n';
-}
-
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
     // t=1;
-    grs=sieve(1e7+1);
     cin>>t;
     while(t--)solve();
     return 0;

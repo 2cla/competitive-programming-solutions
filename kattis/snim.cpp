@@ -2,11 +2,6 @@
 #include "bits/stdc++.h"
 #pragma GCC optimize ("O3")
 #pragma GCC target ("sse4")
-#ifndef ONLINE_JUDGE
-    #include "debug.h"
-#else
-    #define debug(...) 0x0d010F2C
-#endif
 using namespace std;
 typedef long long ll;
 typedef long double ld;
@@ -55,37 +50,38 @@ ll add(ll a,ll b){return (a+b)%mod;}
 ll mul(ll a,ll b){return (a*b)%mod;}
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-vl grs;
-vl sieve(ll n){
-    vl is_prime(n+1,-1);
-    ll idx=1;
-    is_prime[0]=0;is_prime[1]=1;
-    for(ll i=3;i<=n;i+=2){
-        if(is_prime[i]==-1){
-            idx++;
-            for(ll j=i;j<=n;j+=2*i){
-                if(is_prime[j]==-1)is_prime[j]=idx;
+void solve(){
+    ll k;cin>>k;
+    vl srr(k);
+    F0R(i,k)cin>>srr[i];
+    vector<set<ll>>dp(1e4+1);
+    vl dp2(1e4+1);
+    F0R(i,1e4+1){
+        trav(a,srr){
+            if(i-a>=0)dp[i].ins(dp2[i-a]);
+        }
+        F0R(j,105){
+            if(!dp[i].count(j)){
+                dp2[i]=j;break;
             }
         }
     }
-    return is_prime;
-}
-void solve(){
-    ll n;cin>>n;
-    vl arr(n);F0R(i,n)cin>>arr[i];
-    ll gr=0;
-    trav(a,arr){
-        if(a&1)gr^=grs[a];
+    ll m;cin>>m;
+    F0R(i,m){
+        ll l;cin>>l;
+        ll gr=0;
+        F0R(j,l){
+            ll xx;cin>>xx;
+            gr^=dp2[xx];
+        }
+        cout<<(gr?'W':'L');
     }
-    cout<<(gr?"Alice":"Bob")<<'\n';
 }
-
 int main(){
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
     int t;
-    // t=1;
-    grs=sieve(1e7+1);
-    cin>>t;
+    t=1;
+    // cin>>t;
     while(t--)solve();
     return 0;
 }

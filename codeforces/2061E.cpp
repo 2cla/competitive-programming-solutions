@@ -45,7 +45,7 @@ template<class T> using pqg = priority_queue<T, vector<T>, greater<T>>;
 #define print(x) trav(a,x)cout<<a<<' ';cout<<'\n';
 #define clz __builtin_clz
 #define pct __popcount
-//i fucking hate programming
+
 vi rr(int a,vi&brr){
     int m=sz(brr);
     vi ww(m,1<<30);
